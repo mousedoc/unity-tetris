@@ -64,9 +64,9 @@ public class DialogManager : Singleton<DialogManager>
     {
         if (activeDialogs.Contains(dialog) == false)
         {
-            Logger.LogError("Invalid Dialog");
+			Debug.LogError("Invalid Dialog");
             return;
-        }
+        }	
 
         activeDialogs.Remove(dialog);
 

@@ -17,11 +17,12 @@ public class DialogControllerConfirm : DialogControllerWithData<DialogDataConfir
         SetText();
     }
 
-    private void SetText()
+	private void SetText()
     {
-        TitleText.text = Data.TitleKey.ToLocalize();
-        DescriptionText.text = Data.DescriptionKey.ToLocalize();
-        ConfirmText.text = Data.ConfirmTextKey.ToLocalize();
+		// Data.TitleKey.ToLocalize();
+		TitleText.text = "Title Test";
+		DescriptionText.text = "Description Text";
+		ConfirmText.text = "Confirm Text";
     }
 
     public void ConfirmButtonClick()
