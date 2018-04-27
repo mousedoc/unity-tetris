@@ -8,7 +8,7 @@ public class DialogManager : Singleton<DialogManager>
 
     private Dictionary<DialogType, DialogController> dialogPrefabs = new Dictionary<DialogType, DialogController>();
 
-    private List<DialogController> activeDialogs = new List<DialogController>();
+    private Dictionary<DialogType, DialogController> instantiatedDialogs = new Dictionary<DialogType, DialogController>();
 
     private RectTransform dialogCanvas = null;
 
@@ -23,24 +23,27 @@ public class DialogManager : Singleton<DialogManager>
         }
     }
 
+    private Stack<DialogData> DialogStack { get; set; }
+
     #endregion Fields
 
     public void Initialize()
     {
-        CreateCanvas();
+        DialogStack = new Stack<DialogData>();
 
+        CreateCanvas();
         LoadDialogs();
     }
 
     private void CreateCanvas()
     {
-        var canvas = Resources.Load("prefab/ui/canvas/Dialog Canvas");
-        GameObject.Instantiate(canvas);
+        var prefab = Resources.Load("UI/Canvas/Dialog Canvas");
+        GameObject.Instantiate(prefab);
     }
 
     private void LoadDialogs()
     {
-        var prefabs = Resources.LoadAll<DialogController>("prefab/ui/dialog");
+        var prefabs = Resources.LoadAll<DialogController>("UI/Dialog");
         foreach (var prefab in prefabs)
         {
             var type = (DialogType)Enum.Parse(typeof(DialogType), prefab.name);
@@ -48,49 +51,53 @@ public class DialogManager : Singleton<DialogManager>
         }
     }
 
-    public void Push(DialogData data)
+    public DialogController GetDialogController(DialogType type)
     {
-        var dialog = GameObject.Instantiate(dialogPrefabs[data.Type]) as DialogController;
+        if (instantiatedDialogs.ContainsKey(type) == false)
+        {
+            var controller = GameObject.Instantiate(dialogPrefabs[type]) as DialogController;
+            controller.transform.SetParent(DialogCanvas);
+            controller.transform.localPosition = Vector3.zero;
+            controller.transform.localScale = Vector3.one;
+            controller.transform.localRotation = Quaternion.identity;
 
-        dialog.transform.SetParent(DialogCanvas);
-        dialog.transform.localPosition = Vector3.zero;
-        dialog.transform.localScale = Vector3.one;
-        dialog.transform.localRotation = Quaternion.identity;
+            instantiatedDialogs[type] = controller;
+        }
 
-        dialog.Build(data);
+        return instantiatedDialogs[type];
     }
 
-    public void Pop(DialogController dialog)
+    private void UpdateDialog()
     {
-        if (activeDialogs.Contains(dialog) == false)
+        foreach (var controller in instantiatedDialogs.Values)
+            controller.gameObject.SetActive(false);
+
+        if (DialogStack.Count > 0)
         {
-			Debug.LogError("Invalid Dialog");
-            return;
-        }	
+            var currentData = DialogStack.Peek();
+            var controller = GetDialogController(currentData.Type);
 
-        activeDialogs.Remove(dialog);
+            controller.Build(currentData);
+        }
+    }
 
-        PopDialog(dialog);
+    public void Push(DialogData data)
+    {
+        DialogStack.Push(data);
+        UpdateDialog();
+    }
+
+    public void Pop()
+    {
+        if (DialogStack.Count > 0)
+            DialogStack.Pop();
+
+        UpdateDialog();
     }
 
     public void PopAll()
     {
-        foreach (var dialog in activeDialogs)
-            PopDialog(dialog);
-    }
-
-    private void PopDialog(DialogController dialog)
-    {
-        switch (dialog.Data.Type)
-        {
-            case DialogType.Confirm:
-            case DialogType.ConfirmCancel:
-                dialog.gameObject.SetActive(false);
-                break;
-
-            default:
-                GameObject.Destroy(dialog.gameObject);
-                break;
-        }
+        DialogStack.Clear();
+        UpdateDialog();
     }
 }

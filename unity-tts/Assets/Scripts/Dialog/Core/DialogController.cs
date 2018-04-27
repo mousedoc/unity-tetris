@@ -8,9 +8,4 @@ public abstract class DialogController : MonoBehaviour
     {
         Data = data;
     }
-
-    protected void PopSelf()
-    {
-        DialogManager.Instance.Pop(this);
-    }
 }
