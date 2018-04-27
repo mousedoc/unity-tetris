@@ -28,6 +28,7 @@ public class DialogControllerConfirm : DialogControllerWithData<DialogDataConfir
     public void ConfirmButtonClick()
     {
         if (Data.ConfirmCallback != null)
+            DialogManager.Instance.Pop();
             Data.ConfirmCallback();
     }
 }
