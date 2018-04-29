@@ -9,7 +9,7 @@ public class test : MonoBehaviour {
         DialogManager.Instance.Initialize();
     }
 
-    private void Start()
+    private void asdf()
     {
         var confirm = new DialogDataConfirm("title", "desc", "confirm", () =>
         {
@@ -17,6 +17,11 @@ public class test : MonoBehaviour {
         });
 
         DialogManager.Instance.Push(confirm);
+    }
+
+    private void Start()
+    {
+        asdf(); asdf(); asdf(); asdf(); asdf(); asdf();
     }
 }
    

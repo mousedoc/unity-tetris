@@ -37,13 +37,13 @@ public class DialogManager : Singleton<DialogManager>
 
     private void CreateCanvas()
     {
-        var prefab = Resources.Load("UI/Canvas/Dialog Canvas");
+        var prefab = Resources.Load("Prefab/UI/Canvas/Dialog Canvas");
         GameObject.Instantiate(prefab);
     }
 
     private void LoadDialogs()
     {
-        var prefabs = Resources.LoadAll<DialogController>("UI/Dialog");
+        var prefabs = Resources.LoadAll<DialogController>("PrefabUI/Dialog");
         foreach (var prefab in prefabs)
         {
             var type = (DialogType)Enum.Parse(typeof(DialogType), prefab.name);
@@ -76,6 +76,7 @@ public class DialogManager : Singleton<DialogManager>
         {
             var currentData = DialogStack.Peek();
             var controller = GetDialogController(currentData.Type);
+            controller.gameObject.SetActive(true);
 
             controller.Build(currentData);
         }
