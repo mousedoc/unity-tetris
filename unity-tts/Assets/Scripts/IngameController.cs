@@ -44,7 +44,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
     {
         Initialize();
 
-        //StartGame();
+        StartGame();
     }
 
     private void Update()
@@ -61,7 +61,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
 
     public IEnumerator BlockGroupRoutine()
     {
-        var group = BlockCreationService.CreateBlock(BlockGroupType.I);
+        var group = BlockCreationService.GetRandomBlcokGroup ();
         currentDownTerm = 0.0f;
 
         if (group == null)
@@ -80,7 +80,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
             }
             else
                 UpdateBlockGroup(group);
-
+            
             yield return null;
         }
 
@@ -88,7 +88,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
 
         StartCoroutine(BlockGroupRoutine());
     }
-
+    
     private void UpdateBlockGroup(BlockGroup group)
     {
         #region Move

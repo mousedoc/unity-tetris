@@ -6,11 +6,13 @@ public class BlockGroup
 {
     public bool IsFixed = false;
 
+    public BlockGroupType Type { get; private set; }
     public List<Vector2> BlockList { get; private set; }
     public int PivotIndex { get; private set; }
 
-    public BlockGroup(List<Vector2> worldPosList, int pivotIndex)
+    public BlockGroup(BlockGroupType type, List<Vector2> worldPosList, int pivotIndex)
     {
+        Type = type;
         BlockList = worldPosList;
         PivotIndex = pivotIndex;
 
@@ -37,7 +39,7 @@ public class BlockGroup
             }
             log += "\n";
         }
-        Debug.Log(log);
+        //Debug.Log(log);
     }
 
     public bool IsAbleMove(Vector2 offset)
@@ -133,8 +135,11 @@ public class BlockGroup
 
         SetActiveGroup(false);
 
-        for (int i = 0; i < BlockList.Count; i++)
-            BlockList[i] = BlockList[i].RotateByPivot(pivot, degree);
+        if (Type != BlockGroupType.O)
+        {
+            for (int i = 0; i < BlockList.Count; i++)
+                BlockList[i] = BlockList[i].RotateByPivot(pivot, degree);
+        }
 
         SetActiveGroup(true);
     }
