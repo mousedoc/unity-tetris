@@ -4,41 +4,63 @@ using UnityEngine;
 
 public class BlockGroup
 {
-    public bool IsFixed = false;
+    public bool IsFixed { get; private set; }
 
     public BlockGroupType Type { get; private set; }
     public List<Vector2> BlockList { get; private set; }
+    public List<Vector2> GuideList { get; private set; }
     public int PivotIndex { get; private set; }
 
-    public BlockGroup(BlockGroupType type, List<Vector2> worldPosList, int pivotIndex)
+    public Block[,] Grid 
+    {
+        get { return IngameController.Instance.Grid; }
+    }
+
+    public BlockGroup(BlockGroupType type, List<Vector2> worldPosList, int pivotIndex, Color color)
     {
         Type = type;
         BlockList = worldPosList;
+        GuideList = new List<Vector2>();
         PivotIndex = pivotIndex;
 
+        SetColor(color);
+        UpdateGuide();
         SetActiveGroup(true);
+    }
+
+    private void SetColor(Color color)
+    {
+        foreach(var pos in BlockList)
+        {
+            Grid[pos.GetIntY(), pos.GetIntX()].Color = color;
+        }
+    }
+
+    public void Fix()
+    {
+        IsFixed = true;
+        UpdateGuideState(false);
     }
 
     private void SetActiveGroup(bool active)
     {
-        var grid = IngameController.Instance.Grid;
-
         foreach (var pos in BlockList)
         {
             int a = (int)pos.x;
             int b = (int)pos.y;
-            grid[(int)pos.y, (int)pos.x].IsActive = active;
+
+            Grid[(int)pos.y, (int)pos.x].IsActive = active;
         }
 
-        var log = "";
-        for (int y = GridInfo.Height - 1; y >= 0; y--)
-        {
-            for (int x = 0; x < GridInfo.Width; x++)
-            {
-                log += string.Format("{0},",grid[y,x].IsActive ? "1" : "0");
-            }
-            log += "\n";
-        }
+        //var log = "";
+        //for (int y = GridInfo.Height - 1; y >= 0; y--)
+        //{
+        //    for (int x = 0; x < GridInfo.Width; x++)
+        //    {
+        //        log += string.Format("{0},",Grid[y,x].IsActive ? "1" : "0");
+        //    }
+        //    log += "\n";
+        //}
         //Debug.Log(log);
     }
 
@@ -69,6 +91,7 @@ public class BlockGroup
 
         var pivot = BlockList[PivotIndex];
         var angle = 0;
+
         for (angle = 90; angle < 360; angle += 90)
         {
             var able = true;
@@ -99,30 +122,36 @@ public class BlockGroup
 
         if (IsAbleMove(offset) == false)
         {
-            if(offset == Vector2.down)
-                IsFixed = true;
+            if (offset == Vector2.down)
+                Fix();
 
             return;
         }
 
         SetActiveGroup(false);
 
+        var newPos = new List<Vector2>();
         for (int i = 0; i < BlockList.Count; i++)
-            BlockList[i] += offset;
+            newPos.Add(BlockList[i] + offset);
+
+        ApplyBlockPosition(newPos);
 
         SetActiveGroup(true);
     }
 
     public void MoveToLowest()
     {
+        Move(GetLowestMoveOffset());
+    }
+
+    private Vector2 GetLowestMoveOffset()
+    {
         var offset = Vector2.down;
 
         while (IsAbleMove(offset))
             offset += Vector2.down;
 
-        offset -= Vector2.down;
-
-        Move(offset);
+        return offset - Vector2.down;
     }
 
     public void Rotate()
@@ -137,11 +166,66 @@ public class BlockGroup
 
         if (Type != BlockGroupType.O)
         {
+            var newPos = new List<Vector2>();
             for (int i = 0; i < BlockList.Count; i++)
-                BlockList[i] = BlockList[i].RotateByPivot(pivot, degree);
+                newPos.Add(BlockList[i].RotateByPivot(pivot, degree));
+
+            ApplyBlockPosition(newPos);
         }
 
         SetActiveGroup(true);
+    }
+
+    private void ApplyBlockPosition(List<Vector2> newGroup)
+    {
+        for (int i = 0; i < newGroup.Count; i++)
+        {
+            var newX = (int)newGroup[i].x;
+            var newY = (int)newGroup[i].y;
+
+            var oldX = (int)BlockList[i].x;
+            var oldY = (int)BlockList[i].y;
+
+            var newBlock = IngameController.Instance.Grid[newY, newX];
+            var oldBlock = IngameController.Instance.Grid[oldY, oldX];
+
+            newBlock.Inherit(oldBlock);
+
+            BlockList = newGroup;
+        }
+
+        UpdateGuide();
+    }
+
+    private void UpdateGuide()
+    {
+        UpdateGuideState(false);
+
+        GuideList.Clear();
+        var offset = GetLowestMoveOffset();
+       
+        foreach(var block in BlockList)
+        {
+            GuideList.Add(block + offset);
+        }
+
+        UpdateGuideState(true);
+    }
+
+    private void UpdateGuideState(bool active)
+    {
+        for (int i = 0; i < GuideList.Count; i++)
+        {
+            var guideX = GuideList[i].GetIntX();
+            var guideY = GuideList[i].GetIntY();
+
+            var blockX = BlockList[i].GetIntX();
+            var blockY = BlockList[i].GetIntY();
+
+
+            Grid[guideY, guideX].IsGuide = active;
+            Grid[guideY, guideX].Color = Grid[blockY, blockX].Color;
+        }
     }
 }
 

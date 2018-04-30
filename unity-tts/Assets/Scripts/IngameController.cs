@@ -47,11 +47,6 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         StartGame();
     }
 
-    private void Update()
-    {
-
-    }
-
     public void StartGame()
     {
         GameContext.Instance.Reset();
@@ -95,7 +90,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             group.MoveToLowest();
-            group.IsFixed = true;
+            group.Fix();
             return;
         }
 

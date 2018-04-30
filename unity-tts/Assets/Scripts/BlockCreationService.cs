@@ -82,7 +82,10 @@ public static class BlockCreationService
 
         if (CheckAbleCreateBlock(posList))
         {
-            group = new BlockGroup(type, posList.LocalToWorld(), pivotIndex);
+            group = new BlockGroup(type, 
+                                   posList.LocalToWorld(), 
+                                   pivotIndex, 
+                                   ColorExtension.GetRandomColor());
         }
 
         return group;

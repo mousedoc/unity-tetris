@@ -7,10 +7,7 @@ public class Block : MonoBehaviour
 {
     private SpriteRenderer Renderer { get; set; }
 
-    public Sprite on, off;
-
     private bool isActive = false;
-
     public bool IsActive
     {
         get
@@ -20,14 +17,55 @@ public class Block : MonoBehaviour
         set
         {
             isActive = value;
+            UpdateBlock();
+        }
+    }
 
-            if (isActive)
+    private bool isGuide = false;
+    public bool IsGuide
+    {
+        get
+        {
+            return isGuide;
+        }
+        set
+        {
+            isGuide = value;
+            UpdateBlock();
+        }
+    }
+
+    public Color Color
+    {
+        get
+        {
+            return Renderer.color;
+        }
+        set
+        {
+            if (Color != Color.white)
+                Debug.Log("??");
+            if (Color == Color.white)
+                Debug.Log("!!");
+            Renderer.color = value;
+        }
+    }
+
+    private void UpdateBlock()
+    {
+        if (IsActive)
+        {
+            Color = Color.ToOpacity();
+        }
+        else
+        {
+            if (IsGuide)
             {
-                Renderer.sprite = on;
+                Color = Color.ToHalfTransparent();
             }
             else
             {
-                Renderer.sprite = off;
+                Color = Color.ToTransparent();
             }
         }
     }
@@ -40,6 +78,16 @@ public class Block : MonoBehaviour
 
     public void Inherit(Block other)
     {
+        var tempColor = Color;
+        Color = other.Color;
+        other.Color = tempColor;
+
+        var tempIsGuide = IsGuide;
+        IsGuide = other.IsGuide;
+        other.IsGuide = IsGuide;
+
+        var tempActive = IsActive;
         IsActive = other.IsActive;
+        other.IsActive = IsActive;
     }
 }
