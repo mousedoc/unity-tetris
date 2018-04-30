@@ -6,7 +6,15 @@ public static class BlockCreationService
 {
     private static IngameController IngameController { get { return IngameController.Instance; } }
 
-    public static BlockGroup CreateBlock(BlockGroupType type)
+    public static BlockGroup GetRandomBlcokGroup()
+    {
+        var type = EnumExtension.GetRandom<BlockGroupType>();
+        var group = CreateBlockGroup(type);
+
+        return group;
+    }
+
+    public static BlockGroup CreateBlockGroup(BlockGroupType type)
     {
         BlockGroup group = null;
         var posList = new List<Vector2>();
@@ -74,7 +82,7 @@ public static class BlockCreationService
 
         if (CheckAbleCreateBlock(posList))
         {
-            group = new BlockGroup(posList.LocalToWorld(), pivotIndex);
+            group = new BlockGroup(type, posList.LocalToWorld(), pivotIndex);
         }
 
         return group;

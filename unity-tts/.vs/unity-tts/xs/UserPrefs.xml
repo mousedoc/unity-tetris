@@ -1,7 +1,9 @@
 ﻿<Properties StartupConfiguration="{EC15F0CA-750E-A6BB-E3D5-E5509CEF74B3}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Dialog/Core/DialogManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BlockGroup.cs">
     <Files>
-      <File FileName="Assets/Scripts/Dialog/Core/DialogManager.cs" Line="67" Column="27" />
+      <File FileName="Assets/Scripts/BlockGroup.cs" Line="52" Column="39" />
+      <File FileName="Assets/Scripts/BlockCreationService.cs" Line="85" Column="32" />
+      <File FileName="Assets/Scripts/IngameController.cs" Line="86" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
