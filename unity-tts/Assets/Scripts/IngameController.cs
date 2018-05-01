@@ -16,18 +16,44 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
 
     private void Initialize()
     {
-        Grid = new Block[GridInfo.Height, GridInfo.Width];
+        CreateBackBoard();
 
+        Grid = new Block[GridInfo.Height, GridInfo.Width];
         for (int y = 0; y < GridInfo.Height; y++)
         {
             for (int x = 0; x < GridInfo.Width; x++)
             {
-                InitializeBlock(x, y);
+                Grid[y, x] = CreateBlock(x, y);
             }
         }
     }
 
-    private void InitializeBlock(int x, int y)
+    private void Reset()
+    {
+        for (int y = 0; y < GridInfo.Height; y++)
+        {
+            for (int x = 0; x < GridInfo.Width; x++)
+            {
+                Grid[y, x].IsActive = false;
+            }
+        }
+    }
+
+    private void CreateBackBoard()
+    {
+        for (int y = -1; y <= GridInfo.Height; y++)
+        {
+            for (int x = -1; x <= GridInfo.Width; x++)
+            {
+                if (y == -1 || x == -1 || x == GridInfo.Width)
+                {
+                    CreateBlock(x, y, true);
+                }
+            }
+        }
+    }
+
+    private Block CreateBlock(int x, int y, bool isWall = false)
     {
         var prefab = Resources.Load<Block>("Prefab/Ingame/Block");
         var block = Instantiate<Block>(prefab);
@@ -35,9 +61,9 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         block.transform.localPosition = new Vector3(x, y, 0);
         block.transform.localRotation = Quaternion.identity;
         block.transform.localScale = Vector3.one;
-        block.Initialize();
+        block.Initialize(isWall);
 
-        Grid[y, x] = block;
+        return block;
     }
 
     private void Awake()
@@ -47,24 +73,26 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         StartGame();
     }
 
-    public void StartGame()
+    public void StartGame(bool isRestart = false)
     {
         GameContext.Instance.Reset();
+
+        if (isRestart)
+            Reset();
 
         StartCoroutine(BlockGroupRoutine());
     }
 
     public IEnumerator BlockGroupRoutine()
     {
-        var group = BlockCreationService.GetRandomBlcokGroup ();
+        var group = BlockCreationService.GetNextBlock ();
         currentDownTerm = 0.0f;
 
-        if (group == null)
-        {
-            GameContext.Instance.IsGameover = true;
+        if (GameContext.Instance.IsGameover || group == null)
             yield break;
-        }
 
+        group.Initialize();
+        
         while (group.IsFixed == false)
         {
             currentDownTerm += Time.deltaTime;
@@ -79,7 +107,8 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
             yield return null;
         }
 
-        RemoveFinshedLine();
+        Debug.Log("End routine");
+        CheckEraseLine();
 
         StartCoroutine(BlockGroupRoutine());
     }
@@ -117,7 +146,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         #endregion
     }
 
-    private void RemoveFinshedLine()
+    private void CheckEraseLine()
     {
         var finishedLine = 0;
 

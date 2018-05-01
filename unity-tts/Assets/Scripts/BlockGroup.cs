@@ -6,33 +6,38 @@ public class BlockGroup
 {
     public bool IsFixed { get; private set; }
 
-    public BlockGroupType Type { get; private set; }
+    public BlockShapeType Type { get; private set; }
     public List<Vector2> BlockList { get; private set; }
     public List<Vector2> GuideList { get; private set; }
-    public int PivotIndex { get; private set; }
-
+    public int DefaultPivotIndex { get; private set; }
+    public Color Color { get; private set; }
     public Block[,] Grid 
     {
         get { return IngameController.Instance.Grid; }
     }
 
-    public BlockGroup(BlockGroupType type, List<Vector2> worldPosList, int pivotIndex, Color color)
+    public BlockGroup(BlockShapeType type, List<Vector2> worldPosList, int pivotIndex, Color color)
     {
         Type = type;
         BlockList = worldPosList;
         GuideList = new List<Vector2>();
-        PivotIndex = pivotIndex;
+        DefaultPivotIndex = pivotIndex;
+        Color = color;
 
-        SetColor(color);
+    }
+
+    public void Initialize()
+    {
+        UpdateColor();
         UpdateGuide();
         SetActiveGroup(true);
     }
 
-    private void SetColor(Color color)
+    private void UpdateColor()
     {
         foreach(var pos in BlockList)
         {
-            Grid[pos.GetIntY(), pos.GetIntX()].Color = color;
+            Grid[pos.GetIntY(), pos.GetIntX()].Color = Color;
         }
     }
 
@@ -89,7 +94,7 @@ public class BlockGroup
     {
         SetActiveGroup(false);
 
-        var pivot = BlockList[PivotIndex];
+        var pivot = BlockList[DefaultPivotIndex];
         var angle = 0;
 
         for (angle = 90; angle < 360; angle += 90)
@@ -156,7 +161,7 @@ public class BlockGroup
 
     public void Rotate()
     {
-        var pivot = BlockList[PivotIndex];
+        var pivot = BlockList[DefaultPivotIndex];
         var degree = GetDegreeToRotate();
 
         if (degree == 0)
@@ -164,7 +169,7 @@ public class BlockGroup
 
         SetActiveGroup(false);
 
-        if (Type != BlockGroupType.O)
+        if (Type != BlockShapeType.O)
         {
             var newPos = new List<Vector2>();
             for (int i = 0; i < BlockList.Count; i++)
@@ -180,19 +185,20 @@ public class BlockGroup
     {
         for (int i = 0; i < newGroup.Count; i++)
         {
-            var newX = (int)newGroup[i].x;
-            var newY = (int)newGroup[i].y;
-
             var oldX = (int)BlockList[i].x;
             var oldY = (int)BlockList[i].y;
 
-            var newBlock = IngameController.Instance.Grid[newY, newX];
+            var newX = (int)newGroup[i].x;
+            var newY = (int)newGroup[i].y;
+
             var oldBlock = IngameController.Instance.Grid[oldY, oldX];
+            var newBlock = IngameController.Instance.Grid[newY, newX];
+            
 
             newBlock.Inherit(oldBlock);
-
-            BlockList = newGroup;
         }
+
+        BlockList = newGroup;
 
         UpdateGuide();
     }
@@ -205,9 +211,7 @@ public class BlockGroup
         var offset = GetLowestMoveOffset();
        
         foreach(var block in BlockList)
-        {
             GuideList.Add(block + offset);
-        }
 
         UpdateGuideState(true);
     }
@@ -222,9 +226,8 @@ public class BlockGroup
             var blockX = BlockList[i].GetIntX();
             var blockY = BlockList[i].GetIntY();
 
-
-            Grid[guideY, guideX].IsGuide = active;
             Grid[guideY, guideX].Color = Grid[blockY, blockX].Color;
+            Grid[guideY, guideX].IsGuide = active;
         }
     }
 }

@@ -6,23 +6,27 @@ public static class ColorExtension
     public static Color GetRandomColor()
     {
         var type = EnumExtension.GetRandom<BlockColorType>();
+        return type.ToColor();
+    }
 
-        switch(type)
+    public static Color ToColor(this BlockColorType type)
+    {
+        switch (type)
         {
             case BlockColorType.Blue:
-                return "81C7FCFF".ToColorByHex();
+                return "#81C7FCFF".ToColorByHex();
 
             case BlockColorType.Sky:
-                return "9ED5FDFF".ToColorByHex();
+                return "#9ED5FDFF".ToColorByHex();
 
             case BlockColorType.Yellow:
-                return "FAE7C6FF".ToColorByHex();
+                return "#FAE7C6FF".ToColorByHex();
 
             case BlockColorType.Orange:
-                return "FEC19DFF".ToColorByHex();
+                return "#FEC19DFF".ToColorByHex();
 
             case BlockColorType.Red:
-                return "FC8885FF".ToColorByHex();
+                return "#FC8885FF".ToColorByHex();
 
             default:
                 return Color.white;
@@ -31,20 +35,10 @@ public static class ColorExtension
 
     public static Color ToColorByHex(this string hex)
     {
-        hex = hex.Replace("0x", "");
-        hex = hex.Replace("#", "");
+        Color color;
+        ColorUtility.TryParseHtmlString(hex, out color);
 
-        byte a = 255;
-        byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-        byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-        byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-
-        if (hex.Length == 8)
-        {
-            a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
-        }
-
-        return new Color(r, g, b, a);
+        return color;
     }
 
     public static Color ToTransparent(this Color color)

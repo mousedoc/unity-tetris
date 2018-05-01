@@ -1,4 +1,4 @@
-﻿Shader "Custom/CRTShader"
+﻿Shader "Custom/CRTBGShader"
 {
     Properties
     {
@@ -48,7 +48,7 @@
         {
             float4 width = 2.0f + 2.0f * pow(color, float4(4.0f, 4.0f, 4.0f, 4.0f));
             float4 weights = float4(distance / 0.5f, distance / 0.5f, distance / 0.5f, distance / 0.5f);
-            return 1.4f * exp(-pow(weights * rsqrt(0.5f * width), width)) / (0.3f + 0.2f * width);
+            return 1.0f * exp(-pow(weights * rsqrt(0.5f * width), width)) / (0.3f + 0.2f * width);
         }
      
         float4 frag(v2f_img i) : COLOR
