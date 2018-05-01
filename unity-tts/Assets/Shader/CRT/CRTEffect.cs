@@ -35,8 +35,8 @@ public class CRTEffect : MonoBehaviour {
         }
     }
     #endregion
-    // Use this for initialization
-    void Start ()
+
+    private void Start ()
     {
         if(!SystemInfo.supportsImageEffects)
         {
@@ -45,7 +45,7 @@ public class CRTEffect : MonoBehaviour {
         }
     }
    
-    void OnRenderImage (RenderTexture sourceTexture, RenderTexture destTexture)
+    private void OnRenderImage (RenderTexture sourceTexture, RenderTexture destTexture)
     {
         if(curShader != null)
         {
@@ -62,22 +62,16 @@ public class CRTEffect : MonoBehaviour {
             material.SetFloat("_rgb2B", rgb2.b);
             material.SetFloat("_dotWeight",DotWeight);
             material.SetVector("_TextureSize", new Vector2((float)scanSize, (float)scanSize));
+
             Graphics.Blit(sourceTexture, destTexture, material);
         }
         else
-        {
             Graphics.Blit(sourceTexture, destTexture);
-        }
-       
-       
     }
-   
-    void OnDisable ()
+
+    private void OnDisable ()
     {
         if(curMaterial)
-        {
             DestroyImmediate(curMaterial);
-        }
-       
     }
 }

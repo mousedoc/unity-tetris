@@ -1,6 +1,6 @@
 ﻿using System;
 
-public enum BlockGroupType
+public enum BlockShapeType
 {
     I, J, L, O, S, T, Z
 }

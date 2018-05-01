@@ -6,23 +6,31 @@ public static class BlockCreationService
 {
     private static IngameController IngameController { get { return IngameController.Instance; } }
 
-    public static BlockGroup GetRandomBlcokGroup()
+    public static BlockGroupInfo NextBlockGroup = null;
+
+    static BlockCreationService()
     {
-        var type = EnumExtension.GetRandom<BlockGroupType>();
-        var group = CreateBlockGroup(type);
+        NextBlockGroup = BlockGroupInfo.GetRandomBlock();
+    }
+
+    public static BlockGroup GetNextBlock()
+    {
+        var type = EnumExtension.GetRandom<BlockShapeType>();
+        var group = CreateBlockGroup(NextBlockGroup.GroupType, NextBlockGroup.ColorType);
+        NextBlockGroup = BlockGroupInfo.GetRandomBlock();
 
         return group;
     }
 
-    public static BlockGroup CreateBlockGroup(BlockGroupType type)
+    public static BlockGroup CreateBlockGroup(BlockShapeType shape, BlockColorType color)
     {
         BlockGroup group = null;
         var posList = new List<Vector2>();
         var pivotIndex = 0;
 
-        switch (type)
+        switch (shape)
         {
-            case BlockGroupType.I:
+            case BlockShapeType.I:
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(0, -2));
@@ -30,7 +38,7 @@ public static class BlockCreationService
                 pivotIndex = 1;
                 break;
 
-            case BlockGroupType.J:
+            case BlockShapeType.J:
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(0, -2));
@@ -38,7 +46,7 @@ public static class BlockCreationService
                 pivotIndex = 1;
                 break;
 
-            case BlockGroupType.L:
+            case BlockShapeType.L:
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(0, -2));
@@ -46,7 +54,7 @@ public static class BlockCreationService
                 pivotIndex = 1;
                 break;
 
-            case BlockGroupType.O:
+            case BlockShapeType.O:
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(1, 0));
@@ -54,7 +62,7 @@ public static class BlockCreationService
                 pivotIndex = 1;
                 break;
 
-            case BlockGroupType.S:
+            case BlockShapeType.S:
                 posList.Add(new Vector2(-1, -1));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(0, 0));
@@ -62,30 +70,45 @@ public static class BlockCreationService
                 pivotIndex = 2;
                 break;
 
-            case BlockGroupType.Z:
-                posList.Add(new Vector2(1, 0));
+            case BlockShapeType.Z:
+                posList.Add(new Vector2(-1, 0));
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(0, -1));
                 posList.Add(new Vector2(1, -1));
                 pivotIndex = 1;
                 break;
 
-            case BlockGroupType.T:
+            case BlockShapeType.T:
                 posList.Add(new Vector2(-1, 0));
                 posList.Add(new Vector2(0, 0));
                 posList.Add(new Vector2(1, 0));
                 posList.Add(new Vector2(0, -1));
                 pivotIndex = 1;
-
                 break;
         }
 
-        if (CheckAbleCreateBlock(posList))
+        if (CheckAbleCreateBlock(posList) == false)
         {
-            group = new BlockGroup(type, 
-                                   posList.LocalToWorld(), 
-                                   pivotIndex, 
-                                   ColorExtension.GetRandomColor());
+            GameContext.Instance.IsGameover = true;
+
+            var grid = IngameController.Instance.Grid;
+            foreach (var pos in posList.LocalToWorld())
+            {
+                var block = grid[pos.GetIntY(), pos.GetIntX()];
+
+                if (block.IsActive)
+                    continue;
+
+                block.Color = color.ToColor();
+                block.IsActive = true;
+            }
+        }
+        else
+        {
+            group = new BlockGroup(shape,
+               posList.LocalToWorld(),
+               pivotIndex,
+               color.ToColor());
         }
 
         return group;

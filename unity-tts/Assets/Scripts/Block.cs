@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Block : MonoBehaviour
 {
     private SpriteRenderer Renderer { get; set; }
 
     private bool isActive = false;
+
     public bool IsActive
     {
         get
@@ -17,11 +17,12 @@ public class Block : MonoBehaviour
         set
         {
             isActive = value;
-            UpdateBlock();
+            UpdateColor();
         }
     }
 
     private bool isGuide = false;
+
     public bool IsGuide
     {
         get
@@ -31,7 +32,7 @@ public class Block : MonoBehaviour
         set
         {
             isGuide = value;
-            UpdateBlock();
+            UpdateColor();
         }
     }
 
@@ -43,51 +44,45 @@ public class Block : MonoBehaviour
         }
         set
         {
-            if (Color != Color.white)
-                Debug.Log("??");
-            if (Color == Color.white)
-                Debug.Log("!!");
             Renderer.color = value;
         }
     }
 
-    private void UpdateBlock()
+    private void UpdateColor()
     {
+        Color color;
         if (IsActive)
-        {
-            Color = Color.ToOpacity();
-        }
+            color = Color.ToOpacity();
+
         else
         {
             if (IsGuide)
-            {
-                Color = Color.ToHalfTransparent();
-            }
+                color = Color.ToHalfTransparent();
+
             else
-            {
-                Color = Color.ToTransparent();
-            }
+                color = Color.ToTransparent();
         }
+
+        Color = color;
     }
 
-    public void Initialize()
+    public void Initialize(bool isWall)
     {
         Renderer = GetComponent<SpriteRenderer>();
         IsActive = false;
+
+        if (isWall == true)
+        {
+            Color = "#4860FBFF".ToColorByHex();
+            IsActive = true;
+            gameObject.name = "Wall";
+        }
     }
 
     public void Inherit(Block other)
     {
-        var tempColor = Color;
         Color = other.Color;
-        other.Color = tempColor;
-
-        var tempIsGuide = IsGuide;
-        IsGuide = other.IsGuide;
-        other.IsGuide = IsGuide;
-
-        var tempActive = IsActive;
         IsActive = other.IsActive;
-        other.IsActive = IsActive;
     }
 }
+

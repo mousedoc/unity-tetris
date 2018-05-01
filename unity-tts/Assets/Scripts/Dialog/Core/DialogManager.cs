@@ -27,6 +27,11 @@ public class DialogManager : Singleton<DialogManager>
 
     #endregion Fields
 
+    public DialogManager()
+    {
+        Initialize();
+    }
+
     public void Initialize()
     {
         DialogStack = new Stack<DialogData>();
