@@ -6,17 +6,17 @@ public class BackgroundBoxController : MonoBehaviour
 {
     public float Speed;
 
-    private Renderer renderer;
+    private Renderer render;
 
     private void Awake()
     {
-        renderer = GetComponent<Renderer>();
+        render = GetComponent<Renderer>();
     }
 
     private void Update()
     {
-        var offset = renderer.material.mainTextureOffset;
+        var offset = render.material.mainTextureOffset;
         offset += Vector2.right * Time.deltaTime * Speed;
-        renderer.material.mainTextureOffset = offset;
+        render.material.mainTextureOffset = offset;
     }
 }
