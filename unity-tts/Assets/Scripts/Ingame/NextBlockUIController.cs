@@ -18,13 +18,11 @@ public class NextBlockUIController : MonoBehaviour
     private void Awake()
     {
         blocks = new Image[grid, grid];
-
         Initialize();
     }
 
     private void Initialize()
     {
-        var grid = 4;
         prefab = Resources.Load<Image>("Prefab/Ingame/CanvasBlock");
         var width = prefab.rectTransform.rect.width;
         var height = prefab.rectTransform.rect.height;

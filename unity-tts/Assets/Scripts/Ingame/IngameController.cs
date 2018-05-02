@@ -72,7 +72,10 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
     private void Awake()
     {
         Initialize();
+    }
 
+    private void Start()
+    {
         StartGame();
     }
 

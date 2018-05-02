@@ -32,7 +32,8 @@ public abstract class MonoBehaviourSingleton<T> : MonoBehaviour where T : Compon
 					var obj = new GameObject (typeof(T).ToString());
 					instance = obj.AddComponent<T> ();
 				}
-			}
+            }
+
 			return instance;
 		}
 	}
