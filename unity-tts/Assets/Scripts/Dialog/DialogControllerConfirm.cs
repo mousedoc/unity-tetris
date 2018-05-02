@@ -19,7 +19,7 @@ public class DialogControllerConfirm : DialogControllerWithData<DialogDataConfir
 
 	private void SetText()
     {
-        TitleText.text = Data.ConfirmTextKey;
+        TitleText.text = Data.TitleKey;
         DescriptionText.text = Data.DescriptionKey;
         ConfirmText.text = Data.ConfirmTextKey;
     }
