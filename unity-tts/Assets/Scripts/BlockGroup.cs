@@ -51,9 +51,6 @@ public class BlockGroup
     {
         foreach (var pos in BlockList)
         {
-            int a = (int)pos.x;
-            int b = (int)pos.y;
-
             Grid[(int)pos.y, (int)pos.x].IsActive = active;
         }
 
@@ -90,23 +87,47 @@ public class BlockGroup
         return able;
     }
 
-    public int GetDegreeToRotate()
+    public class RotateInfo
+    {
+        public int Angle { get; private set; }
+
+        public int PivotIndex { get; private set; }
+
+        public RotateInfo(int angle, int pivotIndex)
+        {
+            Angle = angle;
+            PivotIndex = pivotIndex;
+        }
+    }
+
+    public RotateInfo GetRotationInfo()
     {
         SetActiveGroup(false);
 
-        var pivot = BlockList[DefaultPivotIndex];
         var angle = 0;
+        var able = true;
+        RotateInfo info = null;
 
-        for (angle = 90; angle < 360; angle += 90)
+        for (int i = DefaultPivotIndex; i >= 0; i--)
         {
-            var able = true;
-            foreach (var pos in BlockList)
+            var pivot = BlockList[i];
+            for (angle = 90; angle < 360; angle += 180)
             {
-                var newPos = pos.RotateByPivot(pivot, angle);
-
-                if (newPos.IsAvailiable() == false)
+                able = true;
+                foreach (var pos in BlockList)
                 {
-                    able = false;
+                    var newPos = pos.RotateByPivot(pivot, angle);
+
+                    if (newPos.IsAvailiable() == false)
+                    {
+                        able = false;
+                        break;
+                    }
+                }
+
+                if (able)
+                {
+                    info = new RotateInfo(angle, i);
                     break;
                 }
             }
@@ -117,7 +138,7 @@ public class BlockGroup
 
         SetActiveGroup(true);
 
-        return angle == 360 ? 0 : angle;
+        return info;
     }
 
     public void Move(Vector2 offset)
@@ -161,10 +182,9 @@ public class BlockGroup
 
     public void Rotate()
     {
-        var pivot = BlockList[DefaultPivotIndex];
-        var degree = GetDegreeToRotate();
+        var rotateInfo = GetRotationInfo();
 
-        if (degree == 0)
+        if (rotateInfo == null)
             return;
 
         SetActiveGroup(false);
@@ -172,8 +192,10 @@ public class BlockGroup
         if (Type != BlockShapeType.O)
         {
             var newPos = new List<Vector2>();
+            var pivot = BlockList[rotateInfo.PivotIndex];
+
             for (int i = 0; i < BlockList.Count; i++)
-                newPos.Add(BlockList[i].RotateByPivot(pivot, degree));
+                newPos.Add(BlockList[i].RotateByPivot(pivot, rotateInfo.Angle));
 
             ApplyBlockPosition(newPos);
         }

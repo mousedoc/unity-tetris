@@ -19,10 +19,9 @@ public class DialogControllerConfirm : DialogControllerWithData<DialogDataConfir
 
 	private void SetText()
     {
-		// Data.TitleKey.ToLocalize();
-		TitleText.text = "Title Test";
-		DescriptionText.text = "Description Text";
-		ConfirmText.text = "Confirm Text";
+        TitleText.text = Data.ConfirmTextKey;
+        DescriptionText.text = Data.DescriptionKey;
+        ConfirmText.text = Data.ConfirmTextKey;
     }
 
     public void ConfirmButtonClick()

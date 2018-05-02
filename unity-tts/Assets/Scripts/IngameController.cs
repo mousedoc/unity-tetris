@@ -47,6 +47,9 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
             {
                 if (y == -1 || x == -1 || x == GridInfo.Width)
                 {
+                    if (y == GridInfo.Height)
+                        continue;
+
                     CreateBlock(x, y, true);
                 }
             }
@@ -58,7 +61,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
         var prefab = Resources.Load<Block>("Prefab/Ingame/Block");
         var block = Instantiate<Block>(prefab);
         block.transform.SetParent(GridTransform.transform);
-        block.transform.localPosition = new Vector3(x, y, 0);
+        block.transform.localPosition = new Vector3(x - GridInfo.CenterXIndex, y - GridInfo.CenterYIndex, 0);
         block.transform.localRotation = Quaternion.identity;
         block.transform.localScale = Vector3.one;
         block.Initialize(isWall);
@@ -107,7 +110,6 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
             yield return null;
         }
 
-        Debug.Log("End routine");
         CheckEraseLine();
 
         StartCoroutine(BlockGroupRoutine());
@@ -134,6 +136,10 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
             direction += Vector3.down;
 
         direction.Normalize();
+
+        if(direction != Vector3.zero)
+            currentDownTerm = 0.0f;
+
         group.Move(direction);
 
         #endregion
@@ -148,7 +154,7 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
 
     private void CheckEraseLine()
     {
-        var finishedLine = 0;
+        var erasedLine = 0;
 
         for (int y = 0; y < GridInfo.Height; y++)
         {
@@ -173,10 +179,13 @@ public class IngameController : MonoBehaviourSingleton<IngameController>
                     }
                 }
 
-                finishedLine++;
+                erasedLine++;
                 y--;
             }
         }
+
+        var score = (erasedLine * 1000) + (erasedLine * 150);
+        GameContext.Instance.AddScore(score);
     }
 }
 

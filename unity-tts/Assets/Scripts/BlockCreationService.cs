@@ -6,18 +6,10 @@ public static class BlockCreationService
 {
     private static IngameController IngameController { get { return IngameController.Instance; } }
 
-    public static BlockGroupInfo NextBlockGroup = null;
-
-    static BlockCreationService()
-    {
-        NextBlockGroup = BlockGroupInfo.GetRandomBlock();
-    }
-
     public static BlockGroup GetNextBlock()
     {
-        var type = EnumExtension.GetRandom<BlockShapeType>();
-        var group = CreateBlockGroup(NextBlockGroup.GroupType, NextBlockGroup.ColorType);
-        NextBlockGroup = BlockGroupInfo.GetRandomBlock();
+        var group = CreateBlockGroup(GameContext.Instance.NextBlockGroup.GroupType, GameContext.Instance.NextBlockGroup.ColorType);
+        GameContext.Instance.ChangeNextBlock();
 
         return group;
     }
@@ -25,67 +17,8 @@ public static class BlockCreationService
     public static BlockGroup CreateBlockGroup(BlockShapeType shape, BlockColorType color)
     {
         BlockGroup group = null;
-        var posList = new List<Vector2>();
-        var pivotIndex = 0;
-
-        switch (shape)
-        {
-            case BlockShapeType.I:
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(0, -2));
-                posList.Add(new Vector2(0, -3));
-                pivotIndex = 1;
-                break;
-
-            case BlockShapeType.J:
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(0, -2));
-                posList.Add(new Vector2(-1, -2));
-                pivotIndex = 1;
-                break;
-
-            case BlockShapeType.L:
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(0, -2));
-                posList.Add(new Vector2(1, -2));
-                pivotIndex = 1;
-                break;
-
-            case BlockShapeType.O:
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(1, 0));
-                posList.Add(new Vector2(1, -1));
-                pivotIndex = 1;
-                break;
-
-            case BlockShapeType.S:
-                posList.Add(new Vector2(-1, -1));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(1, 0));
-                pivotIndex = 2;
-                break;
-
-            case BlockShapeType.Z:
-                posList.Add(new Vector2(-1, 0));
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(0, -1));
-                posList.Add(new Vector2(1, -1));
-                pivotIndex = 1;
-                break;
-
-            case BlockShapeType.T:
-                posList.Add(new Vector2(-1, 0));
-                posList.Add(new Vector2(0, 0));
-                posList.Add(new Vector2(1, 0));
-                posList.Add(new Vector2(0, -1));
-                pivotIndex = 1;
-                break;
-        }
+        var posList = GetBlockLocalPosList(shape);
+        var pivotIndex = GetDefaultPivotIndex(shape);
 
         if (CheckAbleCreateBlock(posList) == false)
         {
@@ -112,6 +45,95 @@ public static class BlockCreationService
         }
 
         return group;
+    }
+
+    public static List<Vector2> GetBlockLocalPosList(BlockShapeType shape)
+    {
+        var list = new List<Vector2>();
+
+        switch (shape)
+        {
+            case BlockShapeType.I:
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(0, -1));
+                list.Add(new Vector2(0, -2));
+                list.Add(new Vector2(0, -3));
+                break;
+
+            case BlockShapeType.J:
+                list.Add(new Vector2(1, 0));
+                list.Add(new Vector2(1, -1));
+                list.Add(new Vector2(1, -2));
+                list.Add(new Vector2(0, -2));
+                break;
+
+            case BlockShapeType.L:
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(0, -1));
+                list.Add(new Vector2(0, -2));
+                list.Add(new Vector2(1, -2));
+                break;
+
+            case BlockShapeType.O:
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(0, -1));
+                list.Add(new Vector2(1, 0));
+                list.Add(new Vector2(1, -1));
+                break;
+
+            case BlockShapeType.S:
+                list.Add(new Vector2(-1, -1));
+                list.Add(new Vector2(0, -1));
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(1, 0));
+                break;
+
+            case BlockShapeType.Z:
+                list.Add(new Vector2(-1, 0));
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(0, -1));
+                list.Add(new Vector2(1, -1));
+                break;
+
+            case BlockShapeType.T:
+                list.Add(new Vector2(-1, 0));
+                list.Add(new Vector2(0, 0));
+                list.Add(new Vector2(1, 0));
+                list.Add(new Vector2(0, -1));
+                break;
+        }
+
+        return list;
+    }
+
+    public static int GetDefaultPivotIndex(BlockShapeType shape)
+    {
+        switch (shape)
+        {
+            case BlockShapeType.I:
+                return 1;
+
+            case BlockShapeType.J:
+                return 1;
+
+            case BlockShapeType.L:
+                return 1;
+
+            case BlockShapeType.O:
+                return 1;
+
+            case BlockShapeType.S:
+                return 2;
+
+            case BlockShapeType.Z:
+                return 1;
+
+            case BlockShapeType.T:
+                return 1;
+        }
+
+        Debug.LogError("GetDefaultPivotIndex() - Argument exception");
+        return 0;
     }
 
     private static bool CheckAbleCreateBlock(List<Vector2> posList)

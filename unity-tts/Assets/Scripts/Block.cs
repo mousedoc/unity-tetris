@@ -73,7 +73,7 @@ public class Block : MonoBehaviour
 
         if (isWall == true)
         {
-            Color = "#4860FBFF".ToColorByHex();
+            Color = "#1CBFC9FF".ToColorByHex();
             IsActive = true;
             gameObject.name = "Wall";
         }

@@ -23,7 +23,7 @@ public class DialogManager : Singleton<DialogManager>
         }
     }
 
-    private Stack<DialogData> DialogStack { get; set; }
+    public List<DialogData> DialogList { get; private set; }
 
     #endregion Fields
 
@@ -34,7 +34,7 @@ public class DialogManager : Singleton<DialogManager>
 
     public void Initialize()
     {
-        DialogStack = new Stack<DialogData>();
+        DialogList = new List<DialogData>();
 
         CreateCanvas();
         LoadDialogs();
@@ -42,13 +42,13 @@ public class DialogManager : Singleton<DialogManager>
 
     private void CreateCanvas()
     {
-        var prefab = Resources.Load("Prefab/UI/Canvas/Dialog Canvas");
+        var prefab = Resources.Load("Prefab/Dialog/Canvas/Dialog Canvas");
         GameObject.Instantiate(prefab);
     }
 
     private void LoadDialogs()
     {
-        var prefabs = Resources.LoadAll<DialogController>("PrefabUI/Dialog");
+        var prefabs = Resources.LoadAll<DialogController>("Prefab/Dialog/Popup");
         foreach (var prefab in prefabs)
         {
             var type = (DialogType)Enum.Parse(typeof(DialogType), prefab.name);
@@ -77,9 +77,9 @@ public class DialogManager : Singleton<DialogManager>
         foreach (var controller in instantiatedDialogs.Values)
             controller.gameObject.SetActive(false);
 
-        if (DialogStack.Count > 0)
+        if (DialogList.Count > 0)
         {
-            var currentData = DialogStack.Peek();
+            var currentData = DialogList[DialogList.Count - 1];
             var controller = GetDialogController(currentData.Type);
             controller.gameObject.SetActive(true);
 
@@ -89,21 +89,31 @@ public class DialogManager : Singleton<DialogManager>
 
     public void Push(DialogData data)
     {
-        DialogStack.Push(data);
+        DialogList.Add(data);
         UpdateDialog();
     }
 
     public void Pop()
     {
-        if (DialogStack.Count > 0)
-            DialogStack.Pop();
+        if (DialogList.Count < 0)
+            return;
 
+        DialogList.RemoveAt(DialogList.Count - 1);
+        UpdateDialog();
+    }
+
+    public void Pop(DialogData data)
+    {
+        if(instantiatedDialogs.ContainsKey(data.Type))
+            instantiatedDialogs[data.Type].gameObject.SetActive(false);
+
+        DialogList.Remove(data);
         UpdateDialog();
     }
 
     public void PopAll()
     {
-        DialogStack.Clear();
+        DialogList.Clear();
         UpdateDialog();
     }
 }

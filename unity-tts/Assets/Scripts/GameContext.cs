@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class GameContext : Singleton<GameContext>
 {
-    public int Score;
+    public int Score { get; private set; }
 
-    public float DownTerm;      // Seconds
+    public BlockGroupInfo NextBlockGroup { get; private set; }
+
+    public float DownTerm { get; private set; }
 
     private bool isGameover;
 
@@ -33,6 +35,34 @@ public class GameContext : Singleton<GameContext>
     {
         IsGameover = false;
         DownTerm = 1;
-        Score = 0;
+        ChangeScore(0);
+        NextBlockGroup = BlockGroupInfo.GetRandomBlock();
+    }
+
+    public void ChangeNextBlock()
+    {
+        GameContext.Instance.NextBlockGroup = BlockGroupInfo.GetRandomBlock();
+        UIController.Instance.NextBlockUI.ChangeNextBlockGroup(GameContext.Instance.NextBlockGroup);
+    }
+
+    private void ChangeScore(int score)
+    {
+        UIController.Instance.ScoreUI.ChangeScore(Score = score);
+
+        var speed = GameContext.Instance.Score / 10000 * 0.05f;
+        GameContext.Instance.ChangeDownterm(1.0f - speed);
+
+        if (GameContext.Instance.DownTerm < 0.1f)
+            GameContext.Instance.ChangeDownterm(0.1f);
+    }
+
+    public void AddScore(int score)
+    {
+        ChangeScore(Score + score);
+    }
+
+    public void ChangeDownterm(float term)
+    {
+        DownTerm = term;
     }
 }

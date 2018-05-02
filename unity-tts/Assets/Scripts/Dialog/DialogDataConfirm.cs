@@ -10,6 +10,12 @@ public class DialogDataConfirm : DialogData
 
     public Action ConfirmCallback { get; private set; }
 
+    // TODO : add property
+    //public string Title
+    //{
+    //    get { return TitleKey.ToLocalize(); }
+    //}
+
     public DialogDataConfirm(string title, string description, string confirm, Action confirmCallback = null) : base(DialogType.Confirm)
     {
         TitleKey = title;
