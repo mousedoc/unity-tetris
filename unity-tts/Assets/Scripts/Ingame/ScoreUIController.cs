@@ -5,15 +5,12 @@ using UnityEngine.UI;
 
 public class ScoreUIController : MonoBehaviour
 {
-    private Text text;
-
-    private int Score { set { text.text = value.ToString(); } }
-
-    private void Awake()
+    public Text Text
     {
-        text = GetComponent<Text>();
-        Score = 0;
+        get { return GetComponent<Text>(); }
     }
+
+    private int Score { set { Text.text = value.ToString(); } }
 
     public void ChangeScore(int score)
     {

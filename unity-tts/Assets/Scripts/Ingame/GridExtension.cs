@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class Vector2Extension
+public static class GridExtension
 {
     public static Vector2 LocalToWorld(this Vector2 vector)
     {

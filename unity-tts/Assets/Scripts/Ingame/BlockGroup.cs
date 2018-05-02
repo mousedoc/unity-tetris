@@ -221,6 +221,7 @@ public class BlockGroup
         }
 
         BlockList = newGroup;
+        EffectSoundManager.Instance.Play(EffectSoundType.BlockAction);
 
         UpdateGuide();
     }

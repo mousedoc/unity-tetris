@@ -6,23 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo1.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo2.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo3.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo4.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo5.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo6.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Hyperbit Arsenal/Demo/Scenes/demo7.unity
+    path: Assets/Scenes/Ingame.unity
     guid: 00000000000000000000000000000000
