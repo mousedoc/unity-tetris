@@ -11,4 +11,5 @@
 - Manual : Left, Right, Up, Down arrows and Spacebar
 
 ## Used
-- Unity 2018.3.14f1
+- Unity
+  - Version 2018.3.14f1
