@@ -2,9 +2,13 @@
 - Unity Tetris project
 
 ## Quickstart
-- Open project by Unity (at least version 5.6)
+
+![Screenshot](/readme/screenshot_00.PNG)
+
+- Open project by Unity (at least version 2018)
 - Open scene Ingame.unity
 - Press play button
+- Manual : Left, Right, Up, Down arrows and Spacebar
 
 ## Used
-- Unity 5.6.5p4
+- Unity 2018.3.14f1
