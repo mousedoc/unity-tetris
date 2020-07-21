@@ -1,12 +1,10 @@
-# unity-tts
+# unity-tetris
 - Unity Tetris project
-
-## Quickstart
+- [Web Demo](https://mousedoc.github.io/unity-tts/)  
 
 ![Screenshot](/readme/screenshot_00.PNG)
 
-[Web Demo](https://mousedoc.github.io/unity-tts/)
-
+## Quickstart
 - Open project by Unity (at least version 2018)
 - Open scene Ingame.unity
 - Press play button
