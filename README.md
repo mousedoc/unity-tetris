@@ -1,6 +1,6 @@
 # unity-tetris
 - Unity Tetris project
-- [Web Demo](https://mousedoc.github.io/unity-tts/)  
+- [Web Demo](https://mousedoc.github.io/unity-tetris/)  
 
 ![Screenshot](/readme/screenshot_00.PNG)
 
